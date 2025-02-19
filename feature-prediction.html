@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Prediction of Patient</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f5f7fa;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #007bff;
+            color: white;
+            padding: 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar .right-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar .notification-icon {
+            font-size: 24px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .navbar .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+        }
+
+        .navbar .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .navbar .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e4e9;
+        }
+
+        .navbar .hamburger-menu {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Dropdown Menu */
+        .dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: white;
+            border: 1px solid #e0e4e9;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 1000;
+        }
+
+        .dropdown.active {
+            display: block;
+        }
+
+        .dropdown .dropdown-item {
+            padding: 12px 24px;
+            cursor: pointer;
+            color: #333;
+            transition: 0.3s;
+        }
+
+        .dropdown .dropdown-item:hover {
+            background: #f0f4f9;
+        }
+
+        /* Notification Dropdown */
+        .notification-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: white;
+            border: 1px solid #e0e4e9;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+        }
+
+        .notification-dropdown.active {
+            display: block;
+        }
+
+        .notification-dropdown .notification-item {
+            padding: 12px;
+            border-bottom: 1px solid #e0e4e9;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .notification-dropdown .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-dropdown .notification-item:hover {
+            background: #f0f4f9;
+        }
+
+        .notification-dropdown .notification-item p {
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .notification-dropdown .notification-item small {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 80px; /* Adjusted for navbar height */
+            left: 0;
+            height: calc(100vh - 80px);
+            width: 240px;
+            background: #ffffff;
+            padding: 20px;
+            border-right: 1px solid #e0e4e9;
+            transition: transform 0.3s ease;
+            z-index: 999;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .nav-item:hover {
+            background: #f0f4f9;
+        }
+
+        .nav-item a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 24px;
+            margin-left: 240px; /* Space for sidebar */
+            margin-top: 80px; /* Adjusted for navbar height */
+        }
+
+        .feature-prediction {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-prediction h3 {
+            margin-bottom: 16px;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .feature-prediction ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-prediction ul li {
+            padding: 8px 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .feature-prediction ul li strong {
+            color: #007bff;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar .hamburger-menu {
+                display: block;
+            }
+
+            .navbar .logo {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                top: 80px;
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #e0e4e9;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <!-- Hamburger Menu (Mobile Only) -->
+        <div class="hamburger-menu" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <!-- Logo (Centered in Mobile) -->
+        <div class="logo">Health Tracker</div>
+
+        <!-- Right Section (Notification and Profile) -->
+        <div class="right-section">
+            <!-- Notification Icon -->
+            <div class="notification-icon" onclick="toggleNotifications()">
+                <i class="fas fa-bell"></i>
+                <span class="notification-count">2</span>
+                <!-- Notification Dropdown -->
+                <div class="notification-dropdown">
+                    <div class="notification-item">
+                        <p>⏰ Dental Checkup Tomorrow</p>
+                        <small>10:00 AM - Dr. Smith</small>
+                    </div>
+                    <div class="notification-item">
+                        <p>💊 Take Multivitamin</p>
+                        <small>Due in 2 hours</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Section -->
+            <div class="profile-section" onclick="toggleProfileDropdown()">
+                <img src="profile-placeholder.jpg" alt="Profile" class="profile-pic">
+                <span></span>
+                <!-- Dropdown Menu -->
+                <div class="dropdown">
+                    <div class="dropdown-item">👤 Profile</div>
+                    <div class="dropdown-item">⚙️ Settings</div>
+                    <div class="dropdown-item">🚪 Logout</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <h2>Menu</h2>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="index.html">🏠 Dashboard</a></li>
+            <li class="nav-item"><a href="health-metrics.html">📈 Health Metrics</a></li>
+            <li class="nav-item"><a href="appointments.html">📅 Appointments</a></li>
+            <li class="nav-item"><a href="medical-records.html">📁 Medical Records</a></li>
+            <li class="nav-item"><a href="notifications.html">🔔 Notifications</a></li>
+            <li class="nav-item"><a href="message-doctor.html">💬 Message to Concern Doctor</a></li>
+            <li class="nav-item"><a href="prediction.html">🔮 Prediction</a></li>
+            <li class="nav-item"><a href="feature-prediction.html">📊 Feature Prediction of Patient</a></li>
+            <li class="nav-item"><a href="settings.html">⚙️ Settings</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <h1>Feature Prediction of Patient</h1>
+        <div class="feature-prediction">
+            <h3>Prediction Based on Features:</h3>
+            <ul>
+                <li>Heart Rate: <strong>Normal</strong></li>
+                <li>Blood Pressure: <strong>Elevated</strong></li>
+                <li>Activity Level: <strong>Moderate</strong></li>
+                <li>Hydration: <strong>Optimal</strong></li>
+            </ul>
+        </div>
+    </main>
+
+    <script>
+        // Toggle Sidebar
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Toggle Profile Dropdown
+        function toggleProfileDropdown() {
+            const dropdown = document.querySelector('.dropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Toggle Notifications
+        function toggleNotifications() {
+            const notificationDropdown = document.querySelector('.notification-dropdown');
+            notificationDropdown.classList.toggle('active');
+        }
+
+        // Close Dropdowns on Outside Click
+        document.addEventListener('click', (event) => {
+            const dropdown = document.querySelector('.dropdown');
+            const profileSection = document.querySelector('.profile-section');
+            const notificationDropdown = document.querySelector('.notification-dropdown');
+            const notificationIcon = document.querySelector('.notification-icon');
+
+            if (!profileSection.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+
+            if (!notificationIcon.contains(event.target)) {
+                notificationDropdown.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+
+</html>
